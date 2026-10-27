@@ -2046,4 +2046,11 @@
 	parseable_packet( HEADER_CZ_MOVE_ITEM_TO_PERSONAL, sizeof( PACKET_CZ_MOVE_ITEM_TO_PERSONAL ), clif_parse_MoveFromKafraFav, 0 );
 #endif
 
+// mazzaro: kRO 2026-02-19 (Ragexe main). CZ_ENTER2 0x0436 tem 23 bytes: 4 bytes novos entre o auth code e o
+// client tick (zerados nas capturas do pktproxy de 2026-10-27, mazzaro/docs/pktproxy.md). Com 19 o map-server
+// derruba a sessao com "unknown connect packet 0x0436(length:23)".
+#if PACKETVER_MAIN_NUM >= 20260219
+	parseable_packet( 0x0436, 23, clif_parse_WantToConnection, 2, 6, 10, 18, 22 );
+#endif
+
 #endif /* CLIF_PACKETDB_HPP */
