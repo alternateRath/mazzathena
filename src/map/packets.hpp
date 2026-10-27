@@ -117,16 +117,25 @@ struct PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM{
 #endif
 	uint32 amount;
 	uint32 startTime;
-// mazzaro: no kRO main com itemId de 32 bits as horas continuam em 1 byte. O cliente 2026-02-19 registra 0x9ae com
-// 19 bytes (g_packetLenMap) e o OpenKore 19 no RagexeRE_2020_04_01b (17 de 2013 a 2017, antes do itemId de 32
-// bits); com uint16 o servidor esperava 20 e engolia 1 byte do pacote seguinte.
-#if PACKETVER >= 20150520 && !( PACKETVER_MAIN_NUM >= 20181121 )
-	uint16 hours;
-#else
+// mazzaro: no 0x9ae as horas sao sempre 1 byte; as de 2 bytes sao do 0xa3d (..._ITEM2, abaixo). O cliente
+// 2026-02-19 registra 0x9ae com 19 bytes e 0xa3d com 20 (g_packetLenMap); o OpenKore da 17 de 2013 a 2017 e 19 no
+// RagexeRE_2020_04_01b. Com uint16 aqui o servidor esperava 20 no 0x9ae e engolia 1 byte do pacote seguinte.
 	uint8 hours;
-#endif
 } __attribute__((packed));
 DEFINE_PACKET_HEADER(CZ_REQ_APPLY_BARGAIN_SALE_ITEM, 0x9ae)
+
+struct PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2{
+	int16 packetType;
+	uint32 AID;
+#if PACKETVER_MAIN_NUM >= 20181121 || PACKETVER_RE_NUM >= 20180704 || PACKETVER_ZERO_NUM >= 20181114
+	uint32 itemId;
+#else
+	uint16 itemId;
+#endif
+	uint32 amount;
+	uint32 startTime;
+	uint16 hours;
+} __attribute__((packed));
 
 struct PACKET_CZ_REQ_REMOVE_BARGAIN_SALE_ITEM{
 	int16 packetType;

@@ -21771,7 +21771,14 @@ void clif_parse_sale_add( int32 fd, map_session_data* sd ){
 		return;
 	}
 	
-	time_t endTime = p->startTime + p->hours * 60 * 60;
+	// mazzaro: o 0xa3d e o 0x9ae com as horas em 2 bytes
+	uint16 hours = p->hours;
+
+	if( p->packetType == HEADER_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2 ){
+		hours = reinterpret_cast<const PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2*>( p )->hours;
+	}
+
+	time_t endTime = p->startTime + hours * 60 * 60;
 
 	clif_sale_add_reply( sd, sale_add_item( p->itemId, p->amount, p->startTime, endTime ) );
 #endif

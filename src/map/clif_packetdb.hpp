@@ -1780,7 +1780,7 @@
 
 // 2015-05-20aRagexe
 #if PACKETVER >= 20150520
-	parseable_packet( HEADER_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2, sizeof( PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM ), clif_parse_sale_add, 0 );
+	parseable_packet( HEADER_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2, sizeof( PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM2 ), clif_parse_sale_add, 0 );
 #endif
 
 // 2015-09-16Ragexe
