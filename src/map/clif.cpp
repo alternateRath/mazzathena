@@ -25812,6 +25812,19 @@ static int32 clif_parse(int32 fd)
 	return 0;
 }
 
+/// mazzaro: pacote que o cliente kRO 2026-02-19 conhece e o mazzathena nao trata (clif_packetdb_kro2026.hpp, gerado
+/// por mazzaro/tools/hexlab/sizeof_probe.py). Sem registro o clif_parse derruba a sessao ("unsupported packet");
+/// aqui ele so avisa na primeira vez de cada id e o pacote e pulado pelo tamanho do cliente.
+void clif_parse_mazzaro_ignore( int32 fd, map_session_data* sd ){
+	static bool avisado[MAX_PACKET_DB + 1];
+	uint16 cmd = RFIFOW( fd, 0 );
+
+	if( cmd <= MAX_PACKET_DB && !avisado[cmd] ){
+		avisado[cmd] = true;
+		ShowWarning( "clif_parse: packet 0x%04x from the client has no handler in mazzathena; ignored (mazzaro/docs/protocolo-2026.md).\n", cmd );
+	}
+}
+
 void packetdb_addpacket( uint16 cmd, uint16 length, void (*func)(int32, map_session_data *), ... ){
 	va_list argp;
 	int32 i;

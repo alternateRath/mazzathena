@@ -2059,6 +2059,9 @@
 // mazzaro/tools/hexlab/sizeof_probe.py, mazzaro/docs/protocolo-2026.md.
 	packet( 0x007e, 46 );
 	packet( 0x0281, 4 );
+
+// mazzaro: o resto dos ids do cliente 2026 que o packet_db nao tem, com handler que avisa e pula.
+#include "clif_packetdb_kro2026.hpp"
 #endif
 
 #endif /* CLIF_PACKETDB_HPP */
