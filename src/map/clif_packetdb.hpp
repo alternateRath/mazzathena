@@ -2051,6 +2051,14 @@
 // derruba a sessao com "unknown connect packet 0x0436(length:23)".
 #if PACKETVER_MAIN_NUM >= 20260219
 	parseable_packet( 0x0436, 23, clif_parse_WantToConnection, 2, 6, 10, 18, 22 );
+
+// mazzaro: ids herdados do 2008-08-27 RE (0x007e = UseSkillToPosMoreInfo, 105) e do embaralhamento de 2012-04-18
+// (0x0281 = ItemListWindowSelected, -1) com tamanho diferente do g_packetLenMap do kRO 2026-02-19 (46 e 4). O cliente
+// nao grava nenhum dos dois ids no .text e os handlers continuam nos ids atuais (0x0367 e 0x07e4): ficam so com o
+// tamanho do cliente, sem handler (clif_parse pula), para nao desalinhar o fluxo se chegarem. Auditoria:
+// mazzaro/tools/hexlab/sizeof_probe.py, mazzaro/docs/protocolo-2026.md.
+	packet( 0x007e, 46 );
+	packet( 0x0281, 4 );
 #endif
 
 #endif /* CLIF_PACKETDB_HPP */
