@@ -81,6 +81,20 @@ struct PACKET_CZ_REQ_CASH_BARGAIN_SALE_ITEM_INFO{
 } __attribute__((packed));
 DEFINE_PACKET_HEADER(CZ_REQ_CASH_BARGAIN_SALE_ITEM_INFO, 0x9ac)
 
+// mazzaro: 0x9c3 (pede a quantidade em promocao, responde ZC_ACK_COUNT_BARGAIN_SALE_ITEM 0x9c4) nao tem campo de
+// tamanho: AID em +2 e itemId em +6. O kRO 2026-02-19 monta 10 bytes (FUN_00908260: 0x9c3, [0x1733c3c], atoi);
+// o rAthena cortava em 8 e lia com a struct do 0x9ac (AID em +4).
+struct PACKET_CZ_REQ_COUNT_BARGAIN_SALE_ITEM{
+	int16 packetType;
+	uint32 AID;
+#if PACKETVER_MAIN_NUM >= 20181121 || PACKETVER_RE_NUM >= 20180704 || PACKETVER_ZERO_NUM >= 20181114
+	uint32 itemId;
+#else
+	uint16 itemId;
+#endif
+} __attribute__((packed));
+DEFINE_PACKET_HEADER(CZ_REQ_COUNT_BARGAIN_SALE_ITEM, 0x9c3)
+
 struct PACKET_ZC_ACK_CASH_BARGAIN_SALE_ITEM_INFO{
 	int16 packetType;
 	uint16 result;
@@ -103,7 +117,10 @@ struct PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM{
 #endif
 	uint32 amount;
 	uint32 startTime;
-#if PACKETVER >= 20150520
+// mazzaro: no kRO main com itemId de 32 bits as horas continuam em 1 byte. O cliente 2026-02-19 registra 0x9ae com
+// 19 bytes (g_packetLenMap) e o OpenKore 19 no RagexeRE_2020_04_01b (17 de 2013 a 2017, antes do itemId de 32
+// bits); com uint16 o servidor esperava 20 e engolia 1 byte do pacote seguinte.
+#if PACKETVER >= 20150520 && !( PACKETVER_MAIN_NUM >= 20181121 )
 	uint16 hours;
 #else
 	uint8 hours;
