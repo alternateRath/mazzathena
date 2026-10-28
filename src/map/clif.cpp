@@ -21048,7 +21048,10 @@ void clif_parse_roulette_generate( int32 fd, map_session_data* sd ){
 	}
 
 	// Player has not claimed his prize yet
-	if( sd->roulette.claimPrize ){
+	// [mazzaro] Only a consolation prize (stage 0) or the top level prize is claimed here; a prize won on a lower
+	// level stays at stake and spinning again climbs to the next level (#7427 claimed it always, which reset the
+	// stage and made levels 2, 4, 6 and 7 unreachable)
+	if( sd->roulette.claimPrize && ( sd->roulette.stage == 0 || sd->roulette.stage >= MAX_ROULETTE_LEVEL ) ){
 		clif_roulette_getitem( sd );
 	}
 
