@@ -58,6 +58,28 @@ BUILDIN_FUNC(mz_episodio)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+static int32 buildin_mz_episodio_conta_sub(block_list* bl, va_list ap)
+{
+	int32 mob_id = va_arg(ap, int32);
+	mob_data* md = BL_CAST(BL_MOB, bl);
+
+	return (md != nullptr && md->mob_id == mob_id && !status_isdead(*md)) ? 1 : 0;
+}
+
+/// mz_episodio_conta(<id do monstro>, "<mapa>") -> quantos estao de fato no mapa e vivos (getmapunits conta tambem
+/// os de spawn adiado, que existem como objeto fora do mapa). Usado pelo @episode conta e pelo teste.
+BUILDIN_FUNC(mz_episodio_conta)
+{
+	int16 m = map_mapname2mapid(script_getstr(st, 3));
+
+	if (m < 0) {
+		script_pushint(st, -1);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	script_pushint(st, map_foreachinmap(buildin_mz_episodio_conta_sub, m, BL_MOB, script_getnum(st, 2)));
+	return SCRIPT_CMD_SUCCESS;
+}
+
 /// mz_episodio_visivel("mob"|"item", <id>) -> 1 se o monstro/item existe no lancamento atual, 0 se nao.
 BUILDIN_FUNC(mz_episodio_visivel)
 {
