@@ -68,7 +68,7 @@ inline int32 carregar( const char* caminho ){
 	}
 
 	std::unordered_map<int32, janela> m, i;
-	char linha[256];
+	char linha[1024];
 	int32 n = 0, nlinha = 0;
 
 	while( fgets( linha, sizeof( linha ), fp ) != nullptr ){
@@ -76,6 +76,10 @@ inline int32 carregar( const char* caminho ){
 		int32 id, abre, fecha;
 
 		nlinha++;
+		if( strchr( linha, '\n' ) == nullptr && !feof( fp ) ){ // linha maior que o buffer: descarta o resto
+			int c;
+			while( ( c = fgetc( fp ) ) != EOF && c != '\n' );
+		}
 		if( linha[0] == '/' || linha[0] == '\r' || linha[0] == '\n' || linha[0] == '\0' ){
 			continue;
 		}
