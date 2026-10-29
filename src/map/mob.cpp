@@ -40,6 +40,7 @@
 #include "pc.hpp"
 #include "pet.hpp"
 #include "quest.hpp"
+#include <custom/mazzaro_episodio.hpp>
 
 using namespace rathena;
 
@@ -525,6 +526,7 @@ int32 mob_get_random_id(int32 type, enum e_random_monster_flags flag, int32 lv)
 
 		if(mob == nullptr ||
 			mob_is_clone( entry->mob_id ) ||
+			!mz_episodio::mob_ok( entry->mob_id ) || // Mazzaro: monstro de episodio futuro
 			(flag&RMF_DB_RATE && (entry->rate < 1000000 && entry->rate <= rnd() % 1000000)) ||
 			(flag&RMF_CHECK_MOB_LV && lv < mob->lv) ||
 			(flag&RMF_MOB_NOT_BOSS && status_has_mode(&mob->status,MD_STATUSIMMUNE) ) ||
@@ -689,6 +691,8 @@ int32 mob_once_spawn(map_session_data* sd, int16 m, int16 x, int16 y, const char
 	for (count = 0; count < amount; count++)
 	{
 		int32 c = (mob_id >= 0) ? mob_id : mob_get_random_id(-mob_id - 1, (battle_config.random_monster_checklv) ? static_cast<e_random_monster_flags>(RMF_DB_RATE|RMF_CHECK_MOB_LV) : RMF_DB_RATE, lv);
+		if (!mz_episodio::mob_ok(c)) // Mazzaro: monstro de episodio futuro nao nasce
+			continue;
 		md = mob_once_spawn_sub((sd) ? sd : nullptr, m, x, y, mobname, c, event, size, ai);
 
 		if (!md)
@@ -1135,6 +1139,14 @@ int32 mob_spawn (mob_data *md)
 		md->m = md->spawn->m;
 		md->x = md->centerX;
 		md->y = md->centerY;
+
+		// Mazzaro: spawn permanente de monstro de episodio futuro fica adiado ate o episodio chegar
+		if (!mz_episodio::mob_ok(md->spawn->id)) {
+			if (md->spawn_timer != INVALID_TIMER)
+				delete_timer(md->spawn_timer, mob_delayspawn);
+			md->spawn_timer = add_timer(tick + mz_episodio::RETENTAR_MS, mob_delayspawn, md->id, 0);
+			return 1;
+		}
 
 		// Search can be skipped for boss monster spawns if spawn location is fixed
 		// We can't skip normal monsters as they should pick a random location if the cell is blocked (e.g. Icewall)
@@ -3323,6 +3335,8 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 		for( const std::shared_ptr<s_mob_drop>& entry : md->db->dropitem ){
 			if (entry->nameid == 0)
 				continue;
+			if (!mz_episodio::item_ok(entry->nameid)) // Mazzaro: item de episodio futuro nao cai
+				continue;
 
 			std::shared_ptr<item_data> it = item_db.find(entry->nameid);
 
@@ -3481,6 +3495,8 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 
 			for( const std::shared_ptr<s_mob_drop>& entry : mdrop ){
 				if(entry->nameid == 0)
+					continue;
+				if (!mz_episodio::item_ok(entry->nameid)) // Mazzaro: item de episodio futuro nao cai
 					continue;
 
 				std::shared_ptr<item_data> i_data = item_db.find(entry->nameid);

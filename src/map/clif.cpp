@@ -58,6 +58,7 @@
 #include "storage.hpp"
 #include "unit.hpp"
 #include "vending.hpp"
+#include <custom/mazzaro_episodio.hpp>
 
 using namespace rathena;
 
@@ -2240,6 +2241,10 @@ void clif_buylist( const map_session_data& sd, const npc_data& nd ){
 	p->packetLength = sizeof( *p );
 
 	for( int32 i = 0, count = 0, discount = npc_shop_discount( &nd ); i < nd.u.shop.count; i++ ){
+		if( !mz_episodio::item_ok( nd.u.shop.shop_item[i].nameid ) ){ // Mazzaro: item de episodio futuro fica fora da loja
+			continue;
+		}
+
 		int32 val = nd.u.shop.shop_item[i].value;
 
 		p->items[count].price = val;

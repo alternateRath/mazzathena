@@ -54,6 +54,7 @@
 #include "storage.hpp"
 #include "trade.hpp"
 #include "vending.hpp"
+#include <custom/mazzaro_episodio.hpp>
 
 using namespace rathena;
 
@@ -1507,6 +1508,11 @@ ACMD_FUNC(item)
 			return -1;
 		}
 
+		if( !mz_episodio::item_ok( item->nameid ) ){ // Mazzaro: item de episodio futuro
+			clif_displaymessage( fd, "[Episodios] Esse item ainda nao existe neste episodio." );
+			return -1;
+		}
+
 		items.push_back( item );
 		itemlist = strtok(nullptr, ":"); //next itemline
 	}
@@ -2364,6 +2370,11 @@ ACMD_FUNC(monster)
 
 	if (mob_id == MOBID_EMPERIUM) {
 		clif_displaymessage(fd, msg_txt(sd,83)); // Monster 'Emperium' cannot be spawned.
+		return -1;
+	}
+
+	if (!mz_episodio::mob_ok(mob_id)) { // Mazzaro: monstro de episodio futuro
+		clif_displaymessage(fd, "[Episodios] Esse monstro ainda nao existe neste episodio.");
 		return -1;
 	}
 

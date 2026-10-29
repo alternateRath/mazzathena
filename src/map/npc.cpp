@@ -34,6 +34,7 @@
 #include "pc.hpp"
 #include "pet.hpp"
 #include "script.hpp" // script_config
+#include <custom/mazzaro_episodio.hpp>
 
 using namespace rathena;
 
@@ -2832,6 +2833,9 @@ e_purchase_result npc_buylist( map_session_data* sd, std::vector<s_npc_buy_list>
 
 		if( j == nd->u.shop.count )
 			return e_purchase_result::PURCHASE_FAIL_COUNT; // no such item in shop
+
+		if( !mz_episodio::item_ok( shop[j].nameid ) ) // Mazzaro: item de episodio futuro nao se vende
+			return e_purchase_result::PURCHASE_FAIL_COUNT;
 
 #if PACKETVER >= 20131223
 		if (nd->subtype == NPCTYPE_MARKETSHOP) {

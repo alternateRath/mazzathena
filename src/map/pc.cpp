@@ -63,6 +63,7 @@
 #include "storage.hpp"
 #include "unit.hpp" // unit_stop_attack(), unit_stop_walking()
 #include "vending.hpp" // struct s_vending
+#include <custom/mazzaro_episodio.hpp>
 
 using namespace rathena;
 
@@ -1859,6 +1860,9 @@ uint8 pc_isequip( const map_session_data* sd, int32 n )
 		return ITEM_EQUIP_ACK_OK;
 
 	if(item == nullptr)
+		return ITEM_EQUIP_ACK_FAIL;
+
+	if(!mz_episodio::item_ok(item->nameid)) // Mazzaro: item de episodio futuro nao se equipa
 		return ITEM_EQUIP_ACK_FAIL;
 
 	if (sd->sc.getSCE(SC_SPIRIT) && sd->sc.getSCE(SC_SPIRIT)->val2 == SL_SUPERNOVICE) {
@@ -6284,6 +6288,8 @@ bool pc_isUseitem(map_session_data *sd,int32 n)
 	nameid = sd->inventory.u.items_inventory[n].nameid;
 
 	if( item == nullptr )
+		return false;
+	if( !mz_episodio::item_ok( nameid ) ) // Mazzaro: item de episodio futuro nao se usa
 		return false;
 	//Not consumable item
 	if( item->type != IT_HEALING && item->type != IT_USABLE && item->type != IT_CASH )
