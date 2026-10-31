@@ -22027,6 +22027,14 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 			clif_ui_open(*sd, OUT_UI_MACRO, 0);
 			break;
 #endif
+		case IN_UI_MOBARO:
+			// MazzaRO: botao MobaRO ao lado do Cash Shop/Roleta (cliente 2026, patch mobaro-button do mazzahex):
+			// abre o dialogo do NPC MOBARO (rotulo OnBotao em npc/custom/mobaro/services.txt) de qualquer lugar.
+			// Ignorado se o jogador ja fala com um NPC, negocia, vende etc. (nao enfileira) ou se o NPC nao existe.
+			if( !pc_isdead( sd ) && !pc_cant_act( sd ) && npc_name2id( "MOBARO" ) != nullptr ){
+				npc_event( sd, "MOBARO::OnBotao", 0 );
+			}
+			break;
 	}
 }
 

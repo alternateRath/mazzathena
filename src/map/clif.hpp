@@ -1409,7 +1409,8 @@ void clif_achievement_reward_ack(int32 fd, unsigned char result, int32 ach_id);
 enum in_ui_type : int8 {
 	IN_UI_MACRO_REGISTER = 2,
 	IN_UI_MACRO_DETECTOR,
-	IN_UI_ATTENDANCE = 5
+	IN_UI_ATTENDANCE = 5,
+	IN_UI_MOBARO = 0x4d // MazzaRO: botao MobaRO do cliente 2026 (mazzahex mobaro-button)
 };
 
 enum out_ui_type : int8 {
