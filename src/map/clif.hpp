@@ -1410,7 +1410,11 @@ enum in_ui_type : int8 {
 	IN_UI_MACRO_REGISTER = 2,
 	IN_UI_MACRO_DETECTOR,
 	IN_UI_ATTENDANCE = 5,
-	IN_UI_MOBARO = 0x4d // MazzaRO: botao MobaRO do cliente 2026 (mazzahex mobaro-button)
+	IN_UI_MOBARO = 0x4d, // MazzaRO: botao MobaRO do cliente 2026 (mazzahex mobaro-button; abria o NPC, hoje o painel e local)
+	IN_UI_MOBARO_ENTRAR = 0x4e, // MazzaRO: painel MobaRO (mazzahex mobaro-painel): entrar na fila
+	IN_UI_MOBARO_SAIR = 0x4f,   // painel: sair da fila
+	IN_UI_MOBARO_ROTA = 0x50,   // painel: trocar a rota de classe
+	IN_UI_MOBARO_ESTADO = 0x51  // painel: pede o estado (responde com ZC_UI_OPEN tipo OUT_UI_MOBARO)
 };
 
 enum out_ui_type : int8 {
@@ -1423,6 +1427,7 @@ enum out_ui_type : int8 {
 	OUT_UI_ATTENDANCE,
 	OUT_UI_ENCHANTGRADE,
 	OUT_UI_ENCHANT = 10,
+	OUT_UI_MOBARO = 0x4d, // MazzaRO: estado do painel MobaRO (cliente 2026 com o patch mobaro-painel; comando de script mobaro_ui)
 };
 
 void clif_ui_open( map_session_data& sd, enum out_ui_type ui_type, int32 data );

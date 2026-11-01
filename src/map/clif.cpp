@@ -22035,6 +22035,28 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 				npc_event( sd, "MOBARO::OnBotao", 0 );
 			}
 			break;
+		// MazzaRO: painel MobaRO (janela propria do cliente 2026, patch mobaro-painel do mazzahex). Cada botao manda um
+		// tipo; o script MB_Control (npc/custom/mobaro/match.txt) responde com mobaro_ui (ZC_UI_OPEN tipo 0x4d).
+		case IN_UI_MOBARO_ENTRAR:
+			if( !pc_isdead( sd ) && npc_name2id( "MB_Control" ) != nullptr ){
+				npc_event( sd, "MB_Control::OnPainelEntrar", 0 );
+			}
+			break;
+		case IN_UI_MOBARO_SAIR:
+			if( npc_name2id( "MB_Control" ) != nullptr ){
+				npc_event( sd, "MB_Control::OnPainelSair", 0 );
+			}
+			break;
+		case IN_UI_MOBARO_ROTA:
+			if( npc_name2id( "MB_Control" ) != nullptr ){
+				npc_event( sd, "MB_Control::OnPainelRota", 0 );
+			}
+			break;
+		case IN_UI_MOBARO_ESTADO:
+			if( npc_name2id( "MB_Control" ) != nullptr ){
+				npc_event( sd, "MB_Control::OnPainelEstado", 0 );
+			}
+			break;
 	}
 }
 

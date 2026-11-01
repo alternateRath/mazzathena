@@ -89,3 +89,17 @@ BUILDIN_FUNC(mz_episodio_visivel)
 	script_pushint(st, strcmp(tipo, "item") == 0 ? mz_episodio::item_ok(id) : mz_episodio::mob_ok(id));
 	return SCRIPT_CMD_SUCCESS;
 }
+
+/// mobaro_ui <estado>{,<char id>};
+/// MazzaRO: manda o estado do painel MobaRO ao cliente 2026 (ZC_UI_OPEN 0x0ae2 tipo OUT_UI_MOBARO = 0x4d, patch
+/// mobaro-painel do mazzahex). O dword: bits 0-1 fase (0 fora, 1 fila, 2 partida), 2-9 fila, 10-17 total, 18-21 rota
+/// (0-11; 15 = nenhuma), 22-25 e 26-29 placar, 30 abre a janela, 31 fecha. Clientes sem o patch ignoram o tipo.
+BUILDIN_FUNC(mobaro_ui)
+{
+	map_session_data* sd;
+
+	if (!script_charid2sd(3, sd))
+		return SCRIPT_CMD_FAILURE;
+	clif_ui_open(*sd, OUT_UI_MOBARO, script_getnum(st, 2));
+	return SCRIPT_CMD_SUCCESS;
+}
