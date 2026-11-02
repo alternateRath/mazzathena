@@ -22009,6 +22009,14 @@ void clif_ui_open( map_session_data& sd, enum out_ui_type ui_type, int32 data ){
 /// Request to open an UI window of the given type
 /// 0A68 <type>.B
 void clif_parse_open_ui( int32 fd, map_session_data* sd ){
+	// MazzaRO: cartao da tela de rotas do painel MobaRO (tipos 0x60-0x6b = rota 0-11): @MBPainelRota + OnPainelRotaSet
+	if( RFIFOB(fd,2) >= IN_UI_MOBARO_ROTA_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_ROTA_11 ){
+		if( npc_name2id( "MB_Control" ) != nullptr ){
+			pc_setreg( sd, reference_uid( add_str( "@MBPainelRota" ), 0 ), RFIFOB(fd,2) - IN_UI_MOBARO_ROTA_0 );
+			npc_event( sd, "MB_Control::OnPainelRotaSet", 0 );
+		}
+		return;
+	}
 	switch( RFIFOB(fd,2) ){
 		case IN_UI_ATTENDANCE:
 			if( !pc_has_permission( sd, PC_PERM_ATTENDANCE ) ){

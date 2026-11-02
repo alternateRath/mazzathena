@@ -1414,7 +1414,9 @@ enum in_ui_type : int8 {
 	IN_UI_MOBARO_ENTRAR = 0x4e, // MazzaRO: painel MobaRO (mazzahex mobaro-painel): entrar na fila
 	IN_UI_MOBARO_SAIR = 0x4f,   // painel: sair da fila
 	IN_UI_MOBARO_ROTA = 0x50,   // painel: trocar a rota de classe
-	IN_UI_MOBARO_ESTADO = 0x51  // painel: pede o estado (responde com ZC_UI_OPEN tipo OUT_UI_MOBARO)
+	IN_UI_MOBARO_ESTADO = 0x51, // painel: pede o estado (responde com ZC_UI_OPEN tipo OUT_UI_MOBARO)
+	IN_UI_MOBARO_ROTA_0 = 0x60, // tela de rotas do painel: cartao da rota 0 (Cavaleiro) ... 0x6b (Arruaceiro)
+	IN_UI_MOBARO_ROTA_11 = 0x6b
 };
 
 enum out_ui_type : int8 {
