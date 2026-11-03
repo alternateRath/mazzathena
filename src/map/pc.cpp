@@ -14862,6 +14862,12 @@ TIMER_FUNC(pc_autotrade_timer){
 
 	sd->autotrade_tid = INVALID_TIMER;
 
+	// Mazzaro: o morador nao abre loja; fica no mapa ate o script tirar (mz_morador_sair)
+	if (sd->state.mz_morador) {
+		npc_event_doall_id("OnMoradorEntrou", sd->id);
+		return 0;
+	}
+
 	if (sd->state.autotrade&2)
 		vending_reopen(*sd);
 	if (sd->state.autotrade&4)

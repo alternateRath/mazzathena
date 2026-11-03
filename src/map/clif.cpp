@@ -11958,6 +11958,17 @@ void clif_parse_WisMessage(int32 fd, map_session_data* sd)
 		return;
 	}
 
+	// Mazzaro: PM para um morador vai para o script (OnMoradorPM com quem mandou anexado); a resposta sai por
+	// mz_morador_pm, como se o morador tivesse digitado
+	if (dstsd->state.mz_morador) {
+		clif_wis_end( *sd, ACKWHISPER_SUCCESS );
+		pc_setregstr(sd, add_str("@mz_pm_morador$"), dstsd->status.name);
+		pc_setregstr(sd, add_str("@mz_pm_msg$"), message);
+		pc_setreg(sd, add_str("@mz_pm_morador_cid"), dstsd->status.char_id);
+		npc_event_doall_id("OnMoradorPM", sd->id);
+		return;
+	}
+
 	// if player is autotrading
 	if (dstsd->state.autotrade == 1){
 		safesnprintf(output,sizeof(output),"%s is in autotrade mode and cannot receive whispered messages.", dstsd->status.name);

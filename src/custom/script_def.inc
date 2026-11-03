@@ -13,3 +13,6 @@ BUILDIN_DEF(mz_episodio,"i?"), // Mazzaro: Motor de Episodios
 BUILDIN_DEF(mz_episodio_visivel,"si"),
 BUILDIN_DEF(mz_episodio_conta,"is"),
 BUILDIN_DEF(mobaro_ui,"i?"), // Mazzaro: painel MobaRO do cliente 2026
+BUILDIN_DEF(mz_morador_entrar,"i"), // Mazzaro: moradores das cidades (sessao sem cliente)
+BUILDIN_DEF(mz_morador_sair,"i"),
+BUILDIN_DEF(mz_morador_pm,"iss"),

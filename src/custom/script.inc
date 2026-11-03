@@ -103,3 +103,80 @@ BUILDIN_FUNC(mobaro_ui)
 	clif_ui_open(*sd, OUT_UI_MOBARO, script_getnum(st, 2));
 	return SCRIPT_CMD_SUCCESS;
 }
+
+// ---- Mazzaro: moradores das cidades (npc/custom/mazzaro/moradores.txt, docs/bots.md) ----
+// Personagens de verdade (linhas no banco, contas do grupo Morador) postos no mapa sem cliente pelo mesmo caminho do
+// @autotrade restaurado no boot: pc_setnewpc com fd 0 (a sessao "vacuo" do map-server) + chrif_authreq autotrade.
+// Ficam com autotrade == 1 e mz_morador; o pc_autotrade_timer chama OnMoradorEntrou em vez de abrir loja ou
+// derrubar, e PM para eles vira OnMoradorPM (clif.cpp). Andar, falar, sentar e emote sao os unit* de sempre.
+
+/// mz_morador_entrar <char id>;
+/// Poe o morador no mapa (onde o personagem esta salvo). Devolve o account_id (o GID para unitwalk/unittalk) ou 0
+/// se ja esta on, nao existe ou o autotrade esta desligado.
+BUILDIN_FUNC(mz_morador_entrar)
+{
+	uint32 char_id = script_getnum(st, 2);
+
+	script_pushint(st, 0);
+	if (!battle_config.feature_autotrade || map_charid2sd(char_id) != nullptr)
+		return SCRIPT_CMD_SUCCESS;
+	if (SQL_ERROR == Sql_Query(mmysql_handle, "SELECT `account_id`, `sex` FROM `char` WHERE `char_id` = %u", char_id)) {
+		Sql_ShowDebug(mmysql_handle);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	if (SQL_SUCCESS != Sql_NextRow(mmysql_handle)) {
+		Sql_FreeResult(mmysql_handle);
+		ShowWarning("mz_morador_entrar: personagem %u nao existe.\n", char_id);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	char* data;
+	Sql_GetData(mmysql_handle, 0, &data, nullptr);
+	uint32 account_id = static_cast<uint32>(strtoul(data, nullptr, 10));
+	Sql_GetData(mmysql_handle, 1, &data, nullptr);
+	char sex = (data[0] == 'F') ? SEX_FEMALE : SEX_MALE;
+	Sql_FreeResult(mmysql_handle);
+	if (map_id2sd(account_id) != nullptr || chrif_search(account_id) != nullptr) // on, ou entrando (auth pendente)
+		return SCRIPT_CMD_SUCCESS;
+
+	map_session_data* sd;
+	CREATE(sd, map_session_data, 1); // como o vending autotrade (do_init_vending_autotrade)
+	pc_setnewpc(sd, account_id, char_id, 0, gettick(), sex, 0);
+	sd->state.autotrade = 1;
+	sd->state.mz_morador = 1;
+	sd->state.block_action |= PCBLOCK_IMMUNE;
+	chrif_authreq(sd, true);
+	script_pushint(st, account_id);
+	return SCRIPT_CMD_SUCCESS;
+}
+
+/// mz_morador_sair <char id>;
+/// Tira o morador do mapa (salva e desloga). Devolve 1 se havia um morador com esse char id.
+BUILDIN_FUNC(mz_morador_sair)
+{
+	map_session_data* sd = map_charid2sd(script_getnum(st, 2));
+
+	if (sd == nullptr || !sd->state.mz_morador) {
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	map_quit(sd);
+	script_pushint(st, 1);
+	return SCRIPT_CMD_SUCCESS;
+}
+
+/// mz_morador_pm <char id do morador>,"<para>","<mensagem>";
+/// O morador manda uma PM, como se tivesse digitado. Devolve 1 se o destinatario esta on.
+BUILDIN_FUNC(mz_morador_pm)
+{
+	map_session_data* sd = map_charid2sd(script_getnum(st, 2));
+	map_session_data* dst = map_nick2sd(script_getstr(st, 3), false);
+	const char* msg = script_getstr(st, 4);
+
+	if (sd == nullptr || !sd->state.mz_morador || dst == nullptr) {
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	clif_wis_message(dst, sd->status.name, msg, strlen(msg) + 1, 0);
+	script_pushint(st, 1);
+	return SCRIPT_CMD_SUCCESS;
+}

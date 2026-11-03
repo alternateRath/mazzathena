@@ -402,6 +402,7 @@ public:
 		uint32 abra_flag : 2; // Abracadabra bugfix by Aru
 		uint32 autocast : 1; // Autospell flag [Inkfish]
 		uint32 autotrade : 3;	//By Fantik. &2 Requested by vending autotrade; &4 Requested by buyingstore autotrade
+		uint32 mz_morador : 1;	// Mazzaro: morador das cidades, sessao sem cliente (autotrade == 1) movida por script
 		uint32 showdelay :1;
 		uint32 showexp :1;
 		uint32 showzeny :1;
