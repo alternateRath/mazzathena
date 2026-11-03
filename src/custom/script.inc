@@ -139,7 +139,10 @@ BUILDIN_FUNC(mz_morador_entrar)
 		return SCRIPT_CMD_SUCCESS;
 
 	map_session_data* sd;
-	CREATE(sd, map_session_data, 1); // como o vending autotrade (do_init_vending_autotrade)
+	// como o login de cliente (clif.cpp): CREATE + placement new. O do_init_vending_autotrade do upstream so faz o
+	// CREATE e o status_change fica sem construtor (pc_authok -> pc_setpos -> getSCE em ponteiro nulo).
+	CREATE(sd, map_session_data, 1);
+	new(sd) map_session_data();
 	pc_setnewpc(sd, account_id, char_id, 0, gettick(), sex, 0);
 	sd->state.autotrade = 1;
 	sd->state.mz_morador = 1;
