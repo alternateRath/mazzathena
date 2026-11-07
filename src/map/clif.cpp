@@ -12892,24 +12892,6 @@ void clif_parse_skill_toid( map_session_data* sd, uint16 skill_id, uint16 skill_
 
 	if( skill_lv < 1 ) skill_lv = 1; //No clue, I have seen the client do this with guild skills :/ [Skotlex]
 
-	// mazzaro: forja do Ferreiro pelo uso da habilidade. As forjas (BS_IRON, BS_STEEL, BS_ENCHANTEDSTONE e
-	// BS_DAGGER..BS_SPEAR) sao passivas no skill_db, e o rAthena so arma o menu da forja (menuskill_id) pelo comando
-	// de script "produce": sem isso o CZ_REQMAKINGITEM do cliente e descartado (clif_parse_ProduceMix). O cliente
-	// e o mazzakore pedem CZ_USE_SKILL e esperam a lista ZC_MAKABLEITEMLIST: desarma um menu de forja anterior,
-	// arma o desta habilidade e manda a lista do produce_db (minerio e pedras: itemlv 21; armas: ate nivel 3).
-	if( ( skill_id >= BS_IRON && skill_id <= BS_ENCHANTEDSTONE ) || ( skill_id >= BS_DAGGER && skill_id <= BS_SPEAR ) ){
-		if( pc_checkskill( sd, skill_id ) < 1 || pc_issit( sd ) || pc_cant_act2( sd ) || sd->npc_id || pc_istrading( sd ) ){
-			return;
-		}
-		if( ( sd->menuskill_id >= BS_IRON && sd->menuskill_id <= BS_ENCHANTEDSTONE ) || ( sd->menuskill_id >= BS_DAGGER && sd->menuskill_id <= BS_SPEAR ) ){
-			clif_menuskill_clear( sd );
-		}else if( sd->menuskill_id ){
-			return; // outro menu aberto
-		}
-		clif_skill_produce_mix_list( *sd, skill_id, skill_id <= BS_ENCHANTEDSTONE ? 21 : 3 );
-		return;
-	}
-
 	int32 inf = skill_get_inf(skill_id);
 	if (inf&INF_GROUND_SKILL || !inf)
 		return; //Using a ground/passive skill on a target? WRONG.
@@ -13238,17 +13220,6 @@ void clif_parse_ProduceMix(int32 fd,map_session_data *sd){
 		case AM_PHARMACY:
 		case RK_RUNEMASTERY:
 		case GC_RESEARCHNEWPOISON:
-		// mazzaro: forja do Ferreiro armada pelo uso da habilidade (clif_parse_skill_toid)
-		case BS_IRON:
-		case BS_STEEL:
-		case BS_ENCHANTEDSTONE:
-		case BS_DAGGER:
-		case BS_SWORD:
-		case BS_TWOHANDSWORD:
-		case BS_AXE:
-		case BS_MACE:
-		case BS_KNUCKLE:
-		case BS_SPEAR:
 			break;
 		default:
 			return;
