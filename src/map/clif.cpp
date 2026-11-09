@@ -22028,6 +22028,14 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 		}
 		return;
 	}
+	// MazzaRO: botoes de build da tela de rotas (0x6c Ofensiva, 0x6d Resistente): @MBPainelBuild + OnPainelBuildSet
+	if( RFIFOB(fd,2) >= IN_UI_MOBARO_BUILD_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_BUILD_1 ){
+		if( npc_name2id( "MB_Control" ) != nullptr ){
+			pc_setreg( sd, reference_uid( add_str( "@MBPainelBuild" ), 0 ), RFIFOB(fd,2) - IN_UI_MOBARO_BUILD_0 );
+			npc_event( sd, "MB_Control::OnPainelBuildSet", 0 );
+		}
+		return;
+	}
 	switch( RFIFOB(fd,2) ){
 		case IN_UI_ATTENDANCE:
 			if( !pc_has_permission( sd, PC_PERM_ATTENDANCE ) ){

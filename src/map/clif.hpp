@@ -1416,7 +1416,9 @@ enum in_ui_type : int8 {
 	IN_UI_MOBARO_ROTA = 0x50,   // painel: trocar a rota de classe
 	IN_UI_MOBARO_ESTADO = 0x51, // painel: pede o estado (responde com ZC_UI_OPEN tipo OUT_UI_MOBARO)
 	IN_UI_MOBARO_ROTA_0 = 0x60, // tela de rotas do painel: cartao da rota 0 (Cavaleiro) ... 0x6b (Arruaceiro)
-	IN_UI_MOBARO_ROTA_11 = 0x6b
+	IN_UI_MOBARO_ROTA_11 = 0x6b,
+	IN_UI_MOBARO_BUILD_0 = 0x6c, // tela de rotas do painel: botao Ofensiva (0x6c) / Resistente (0x6d) (MobaRO v0.5)
+	IN_UI_MOBARO_BUILD_1 = 0x6d
 };
 
 enum out_ui_type : int8 {
