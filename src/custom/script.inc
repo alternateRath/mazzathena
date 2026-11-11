@@ -105,6 +105,22 @@ BUILDIN_FUNC(mobaro_ui)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+/// mobaro_hud <placar>,<relogio>{,<char id>};
+/// MazzaRO: HUD da partida MobaRO no cliente 2026 (patch mobaro-hud do mazzahex), dois ZC_UI_OPEN 0x0ae2:
+/// OUT_UI_MOBARO_HUD (0x4e) com o placar - bits 0-9 abates de jogador do time Kafra, 10-19 do time Rebenker, 20-29
+/// abates do proprio jogador, 30 time dele (0 Kafra, 1 Rebenker), 31 esconde o HUD - e OUT_UI_MOBARO_RELOGIO (0x4f)
+/// com o relogio - bits 0-15 segundos que faltam (o cliente conta sozinho), 31 desliga. Clientes sem o patch ignoram.
+BUILDIN_FUNC(mobaro_hud)
+{
+	map_session_data* sd;
+
+	if (!script_charid2sd(4, sd))
+		return SCRIPT_CMD_FAILURE;
+	clif_ui_open(*sd, OUT_UI_MOBARO_HUD, script_getnum(st, 2));
+	clif_ui_open(*sd, OUT_UI_MOBARO_RELOGIO, script_getnum(st, 3));
+	return SCRIPT_CMD_SUCCESS;
+}
+
 // ---- Mazzaro: moradores das cidades (npc/custom/mazzaro/moradores.txt, docs/bots.md) ----
 // Personagens de verdade (linhas no banco, contas do grupo Morador) postos no mapa sem cliente pelo mesmo caminho do
 // @autotrade restaurado no boot: pc_setnewpc com fd 0 (a sessao "vacuo" do map-server) + chrif_authreq autotrade.

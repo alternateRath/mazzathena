@@ -1432,6 +1432,8 @@ enum out_ui_type : int8 {
 	OUT_UI_ENCHANTGRADE,
 	OUT_UI_ENCHANT = 10,
 	OUT_UI_MOBARO = 0x4d, // MazzaRO: estado do painel MobaRO (cliente 2026 com o patch mobaro-painel; comando de script mobaro_ui)
+	OUT_UI_MOBARO_HUD = 0x4e, // MazzaRO: placar do HUD da partida MobaRO (patch mobaro-hud; comando de script mobaro_hud)
+	OUT_UI_MOBARO_RELOGIO = 0x4f, // MazzaRO: relogio do HUD da partida MobaRO (segundos que faltam)
 };
 
 void clif_ui_open( map_session_data& sd, enum out_ui_type ui_type, int32 data );
