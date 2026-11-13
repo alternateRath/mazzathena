@@ -16971,7 +16971,12 @@ BUILDIN_FUNC(equip) {
 
 		ARR_FIND( 0, MAX_INVENTORY, i, sd->inventory.u.items_inventory[i].nameid == nameid );
 		if (i < MAX_INVENTORY) {
-			pc_equipitem(sd,i,id->equip);
+			// mazzaro: quem empunha duas armas (Assassin) recebe pela mao direita e depois pela esquerda, como no
+			// clique duplo do cliente; antes o script sempre trocava a arma da direita (MobaRO v0.8, Duas Adagas)
+			int32 req_pos = id->equip;
+			if (req_pos == EQP_HAND_R && pc_equippoint(sd, i) == EQP_ARMS)
+				req_pos = EQP_ARMS;
+			pc_equipitem(sd,i,req_pos);
 			script_pushint(st,1);
 			return SCRIPT_CMD_SUCCESS;
 		}
