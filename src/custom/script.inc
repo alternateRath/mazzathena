@@ -93,14 +93,16 @@ BUILDIN_FUNC(mz_episodio_visivel)
 /// mobaro_ui <estado>{,<char id>};
 /// MazzaRO: manda o estado do painel MobaRO ao cliente 2026 (ZC_UI_OPEN 0x0ae2 tipo OUT_UI_MOBARO = 0x4d, patch
 /// mobaro-painel do mazzahex). O dword: bits 0-1 fase (0 fora, 1 fila, 2 partida), 2-9 fila, 10-17 total, 18-21 rota
-/// (0-11; 15 = nenhuma), 22-24 e 25-27 placar, 28 build (0 Ofensiva, 1 Resistente; MobaRO v0.5), 29 livre, 30 abre a
-/// janela, 31 fecha. Clientes sem o patch ignoram o tipo.
+/// (0-11; 15 = nenhuma), 22-24 e 25-27 placar, 28-29 vertente da rota (0-3; MobaRO v0.8, antes so o bit 28 da build),
+/// 30 abre a janela, 31 fecha. Antes do estado vai o perfil (OUT_UI_MOBARO_PERFIL 0x50, bit 0 = sexo, 1 masculino): o
+/// painel v2 escolhe por ele o retrato e Bard ou Dancer na rota 5. Clientes sem o patch ignoram os dois tipos.
 BUILDIN_FUNC(mobaro_ui)
 {
 	map_session_data* sd;
 
 	if (!script_charid2sd(3, sd))
 		return SCRIPT_CMD_FAILURE;
+	clif_ui_open(*sd, OUT_UI_MOBARO_PERFIL, sd->status.sex == SEX_MALE ? 1 : 0);
 	clif_ui_open(*sd, OUT_UI_MOBARO, script_getnum(st, 2));
 	return SCRIPT_CMD_SUCCESS;
 }

@@ -1415,10 +1415,11 @@ enum in_ui_type : int8 {
 	IN_UI_MOBARO_SAIR = 0x4f,   // painel: sair da fila
 	IN_UI_MOBARO_ROTA = 0x50,   // painel: trocar a rota de classe
 	IN_UI_MOBARO_ESTADO = 0x51, // painel: pede o estado (responde com ZC_UI_OPEN tipo OUT_UI_MOBARO)
+	IN_UI_MOBARO_OBJETIVOS = 0x52, // painel v2: botao "Objetivos da partida" (MobaRO v0.8)
 	IN_UI_MOBARO_ROTA_0 = 0x60, // tela de rotas do painel: cartao da rota 0 (Cavaleiro) ... 0x6b (Arruaceiro)
 	IN_UI_MOBARO_ROTA_11 = 0x6b,
-	IN_UI_MOBARO_BUILD_0 = 0x6c, // tela de rotas do painel: botao Ofensiva (0x6c) / Resistente (0x6d) (MobaRO v0.5)
-	IN_UI_MOBARO_BUILD_1 = 0x6d
+	IN_UI_MOBARO_BUILD_0 = 0x6c, // vertente 0..3 da rota (0x6c-0x6f; ate a v0.7 so 0x6c Ofensiva / 0x6d Resistente)
+	IN_UI_MOBARO_BUILD_3 = 0x6f
 };
 
 enum out_ui_type : int8 {
@@ -1434,6 +1435,7 @@ enum out_ui_type : int8 {
 	OUT_UI_MOBARO = 0x4d, // MazzaRO: estado do painel MobaRO (cliente 2026 com o patch mobaro-painel; comando de script mobaro_ui)
 	OUT_UI_MOBARO_HUD = 0x4e, // MazzaRO: placar do HUD da partida MobaRO (patch mobaro-hud; comando de script mobaro_hud)
 	OUT_UI_MOBARO_RELOGIO = 0x4f, // MazzaRO: relogio do HUD da partida MobaRO (segundos que faltam)
+	OUT_UI_MOBARO_PERFIL = 0x50, // MazzaRO: painel MobaRO v2, dados do personagem (bit 0 = sexo; mandado pelo mobaro_ui)
 };
 
 void clif_ui_open( map_session_data& sd, enum out_ui_type ui_type, int32 data );

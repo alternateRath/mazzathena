@@ -22028,8 +22028,8 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 		}
 		return;
 	}
-	// MazzaRO: botoes de build da tela de rotas (0x6c Ofensiva, 0x6d Resistente): @MBPainelBuild + OnPainelBuildSet
-	if( RFIFOB(fd,2) >= IN_UI_MOBARO_BUILD_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_BUILD_1 ){
+	// MazzaRO: vertente 0..3 da rota (0x6c-0x6f; painel v2, MobaRO v0.8): @MBPainelBuild + OnPainelBuildSet
+	if( RFIFOB(fd,2) >= IN_UI_MOBARO_BUILD_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_BUILD_3 ){
 		if( npc_name2id( "MB_Control" ) != nullptr ){
 			pc_setreg( sd, reference_uid( add_str( "@MBPainelBuild" ), 0 ), RFIFOB(fd,2) - IN_UI_MOBARO_BUILD_0 );
 			npc_event( sd, "MB_Control::OnPainelBuildSet", 0 );
@@ -22082,6 +22082,11 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 		case IN_UI_MOBARO_ESTADO:
 			if( npc_name2id( "MB_Control" ) != nullptr ){
 				npc_event( sd, "MB_Control::OnPainelEstado", 0 );
+			}
+			break;
+		case IN_UI_MOBARO_OBJETIVOS:
+			if( npc_name2id( "MB_Control" ) != nullptr ){
+				npc_event( sd, "MB_Control::OnPainelObjetivos", 0 );
 			}
 			break;
 	}
