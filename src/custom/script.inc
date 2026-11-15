@@ -123,6 +123,21 @@ BUILDIN_FUNC(mobaro_hud)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+/// mobaro_modos <dword>{,<char id>};
+/// MazzaRO: modos de jogo do painel MobaRO (janela "Escolha o modo", MobaRO v0.14): ZC_UI_OPEN 0x0ae2 tipo
+/// OUT_UI_MOBARO_MODOS (0x51). O dword: bits 0-1 modo da ultima escolha (0 1x1, 1 3x3, 2 5x5), 2-3 / 4-5 / 6-7 faixa do
+/// rank em cada modo (0 Bronze, 1 Prata, 2 Ouro), 8-11 / 12-15 / 16-19 quantos estao na fila de cada modo (0-15),
+/// 20-29 pontos do rank no modo da ultima escolha (0-1023). Clientes sem o patch ignoram o tipo.
+BUILDIN_FUNC(mobaro_modos)
+{
+	map_session_data* sd;
+
+	if (!script_charid2sd(3, sd))
+		return SCRIPT_CMD_FAILURE;
+	clif_ui_open(*sd, OUT_UI_MOBARO_MODOS, script_getnum(st, 2));
+	return SCRIPT_CMD_SUCCESS;
+}
+
 /// mobaro_andar(<gid do monstro>,<x>,<y>) -> 1 se o caminho existe e o monstro saiu andando, 0 se nao.
 /// MazzaRO: anda como o proprio monstro andaria (unit_walktoxy), SEM o "andar forcado" do unitwalk: o unitwalk liga
 /// ud->state.force_walk, e com ele a IA do monstro nao procura alvo ate chegar a celula exata; se o caminho trava no

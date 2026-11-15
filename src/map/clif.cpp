@@ -22036,6 +22036,15 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 		}
 		return;
 	}
+	// MazzaRO: modo de jogo escolhido na janela "Escolha o modo" do painel (0x53-0x55 = 1x1, 3x3, 5x5; MobaRO v0.14):
+	// @MBPainelModo (0..2) + OnPainelModo, que poe o jogador na fila daquele modo
+	if( RFIFOB(fd,2) >= IN_UI_MOBARO_MODO_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_MODO_2 ){
+		if( !pc_isdead( sd ) && npc_name2id( "MB_Control" ) != nullptr ){
+			pc_setreg( sd, reference_uid( add_str( "@MBPainelModo" ), 0 ), RFIFOB(fd,2) - IN_UI_MOBARO_MODO_0 );
+			npc_event( sd, "MB_Control::OnPainelModo", 0 );
+		}
+		return;
+	}
 	switch( RFIFOB(fd,2) ){
 		case IN_UI_ATTENDANCE:
 			if( !pc_has_permission( sd, PC_PERM_ATTENDANCE ) ){
