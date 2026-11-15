@@ -8100,7 +8100,11 @@ int32 battle_check_target( const block_list* src, const block_list* target, int3
 
 			if( !md->special_state.ai )
 			{ //Normal mobs
-				if(
+				// Mazzaro (MobaRO): monstros de battleground de times diferentes (bg_monster: lacaios, Torres,
+				// sentinelas) sao inimigos entre si; sem isto todo monstro sem IA era "amigo" de todos.
+				if( t_bl->type == BL_MOB && md->bg_id && static_cast<const mob_data*>(t_bl)->bg_id && md->bg_id != static_cast<const mob_data*>(t_bl)->bg_id )
+					state |= BCT_ENEMY;
+				else if(
 					( target->type == BL_MOB && t_bl->type == BL_PC && !battle_get_exception_ai(*target) ) ||
 					( t_bl->type == BL_MOB && (static_cast<const mob_data*>(t_bl)->special_state.ai == AI_NONE || static_cast<const mob_data*>(t_bl)->special_state.ai == AI_WAVEMODE ))
 				  )

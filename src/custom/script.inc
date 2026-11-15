@@ -123,6 +123,27 @@ BUILDIN_FUNC(mobaro_hud)
 	return SCRIPT_CMD_SUCCESS;
 }
 
+/// mobaro_andar(<gid do monstro>,<x>,<y>) -> 1 se o caminho existe e o monstro saiu andando, 0 se nao.
+/// MazzaRO: anda como o proprio monstro andaria (unit_walktoxy), SEM o "andar forcado" do unitwalk: o unitwalk liga
+/// ud->state.force_walk, e com ele a IA do monstro nao procura alvo ate chegar a celula exata; se o caminho trava no
+/// meio (outro monstro, jogador, parede), o monstro fica parado e cego para sempre (os lacaios do MobaRO ate a v0.13).
+/// Aqui a IA continua valendo: inimigo a vista, ele larga o caminho e ataca; o script manda andar de novo depois.
+/// Tambem solta um force_walk antigo que tenha ficado preso. Caminho de ate 32 celulas (MAX_WALKPATH).
+BUILDIN_FUNC(mobaro_andar)
+{
+	block_list* bl = map_id2bl(script_getnum(st, 2));
+
+	if (bl == nullptr || bl->type != BL_MOB || status_isdead(*bl)) {
+		script_pushint(st, 0);
+		return SCRIPT_CMD_SUCCESS;
+	}
+	unit_data* ud = unit_bl2ud(bl);
+	if (ud != nullptr)
+		ud->state.force_walk = false;
+	script_pushint(st, unit_walktoxy(bl, script_getnum(st, 3), script_getnum(st, 4), 0) ? 1 : 0);
+	return SCRIPT_CMD_SUCCESS;
+}
+
 // ---- Mazzaro: moradores das cidades (npc/custom/mazzaro/moradores.txt, docs/bots.md) ----
 // Personagens de verdade (linhas no banco, contas do grupo Morador) postos no mapa sem cliente pelo mesmo caminho do
 // @autotrade restaurado no boot: pc_setnewpc com fd 0 (a sessao "vacuo" do map-server) + chrif_authreq autotrade.
