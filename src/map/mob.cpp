@@ -2384,6 +2384,12 @@ static int32 mob_ai_sub_lazy(mob_data *md, va_list args)
 	if (battle_config.mob_ai&0x20 && map_getmapdata(md->m)->users>0)
 		return (int32)mob_ai_sub_hard(md, tick);
 
+	// Mazzaro (MobaRO): monstro de battleground (bg_monster: lacaios, Torres, sentinelas) pensa sempre que o mapa tem
+	// jogador, mesmo longe de todos. Sem isto so a IA "preguicosa" rodava fora da vista de um jogador: lacaios
+	// paravam ao lado da Torre inimiga sem ataca-la e passavam pelos lacaios do outro time sem brigar.
+	if (md->bg_id && map_getmapdata(md->m)->users > 0)
+		return (int32)mob_ai_sub_hard(md, tick);
+
 	if (md->prev==nullptr || md->status.hp == 0)
 		return 1;
 
