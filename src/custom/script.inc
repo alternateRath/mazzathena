@@ -123,17 +123,21 @@ BUILDIN_FUNC(mobaro_hud)
 	return SCRIPT_CMD_SUCCESS;
 }
 
-/// mobaro_modos <dword>{,<char id>};
+/// mobaro_modos <dword>{,<pontos>{,<char id>}};
 /// MazzaRO: modos de jogo do painel MobaRO (janela "Escolha o modo", MobaRO v0.14): ZC_UI_OPEN 0x0ae2 tipo
 /// OUT_UI_MOBARO_MODOS (0x51). O dword: bits 0-1 modo da ultima escolha (0 1x1, 1 3x3, 2 5x5), 2-3 / 4-5 / 6-7 faixa do
 /// rank em cada modo (0 Bronze, 1 Prata, 2 Ouro), 8-11 / 12-15 / 16-19 quantos estao na fila de cada modo (0-15),
-/// 20-29 pontos do rank no modo da ultima escolha (0-1023). Clientes sem o patch ignoram o tipo.
+/// 20-29 pontos do rank no modo da ultima escolha (0-1023). <pontos> (MobaRO v0.15, tipo OUT_UI_MOBARO_PONTOS 0x52):
+/// os pontos dos tres modos, 10 bits cada (0-9 1x1, 10-19 3x3, 20-29 5x5); vai antes do 0x51, que redesenha a janela.
+/// Clientes sem o patch ignoram os tipos.
 BUILDIN_FUNC(mobaro_modos)
 {
 	map_session_data* sd;
 
-	if (!script_charid2sd(3, sd))
+	if (!script_charid2sd(4, sd))
 		return SCRIPT_CMD_FAILURE;
+	if (script_hasdata(st, 3))
+		clif_ui_open(*sd, OUT_UI_MOBARO_PONTOS, script_getnum(st, 3));
 	clif_ui_open(*sd, OUT_UI_MOBARO_MODOS, script_getnum(st, 2));
 	return SCRIPT_CMD_SUCCESS;
 }

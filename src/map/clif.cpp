@@ -22045,6 +22045,17 @@ void clif_parse_open_ui( int32 fd, map_session_data* sd ){
 		}
 		return;
 	}
+	// MazzaRO: "Entrar na fila" do fluxo do painel (MobaRO v0.15): 0x56 + 2 * modo + grupo -> @MBPainelModo (0..2),
+	// @MBPainelGrupo (0 individual, 1 em grupo) + OnPainelFila. A classe e a vertente chegam antes (0x60+, 0x6c+).
+	if( RFIFOB(fd,2) >= IN_UI_MOBARO_FILA_0 && RFIFOB(fd,2) <= IN_UI_MOBARO_FILA_5 ){
+		if( !pc_isdead( sd ) && npc_name2id( "MB_Control" ) != nullptr ){
+			int32 v = RFIFOB(fd,2) - IN_UI_MOBARO_FILA_0;
+			pc_setreg( sd, reference_uid( add_str( "@MBPainelModo" ), 0 ), v / 2 );
+			pc_setreg( sd, reference_uid( add_str( "@MBPainelGrupo" ), 0 ), v % 2 );
+			npc_event( sd, "MB_Control::OnPainelFila", 0 );
+		}
+		return;
+	}
 	switch( RFIFOB(fd,2) ){
 		case IN_UI_ATTENDANCE:
 			if( !pc_has_permission( sd, PC_PERM_ATTENDANCE ) ){
